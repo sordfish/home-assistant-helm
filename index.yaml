@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  home-assistant:
+  - apiVersion: v2
+    appVersion: 2022.10.5
+    created: "2022-10-28T12:19:33.788246873Z"
+    description: A Helm chart for Home Assistant
+    digest: 2a23cbe81ae186896d51eb201b8ed11063139ba7e22e520ef764b23fccae25b4
+    name: home-assistant
+    type: application
+    urls:
+    - https://github.com/sordfish/home-assistant-helm/releases/download/home-assistant-0.1.1/home-assistant-0.1.1.tgz
+    version: 0.1.1
+generated: "2022-10-28T12:19:33.788256874Z"
