@@ -26,25 +26,66 @@ spec:
       {{- end }}
       serviceAccountName: {{ include "home-assistant.serviceAccountName" . }}
       securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}          
       containers:
+        - name: codeserver
+          args:
+          - --auth
+          - none
+          - --user-data-dir
+          - /data/config/.vscode
+          - --port
+          - "12321"
+          - /data/config
+          image: "{{ .Values.addons.codeserver.image.repository }}:{{ .Values.addons.codeserver.image.tag }}"
+          imagePullPolicy: "{{ .Values.addons.codeserver.image.pullPolicy }}"
+          name: codeserver
+          ports:
+          - containerPort: 12321
+            name: codeserver
+            protocol: TCP
+          resources: {}
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+          - mountPath: /data/config
+            name: config      
         - name: {{ .Chart.Name }}
+          env:
+            - name: TZ
+              value: UTC
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 80
+              containerPort: 8123
               protocol: TCP
           livenessProbe:
-            httpGet:
-              path: /
-              port: http
+            failureThreshold: 3
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 8123
+            timeoutSeconds: 1
           readinessProbe:
-            httpGet:
-              path: /
-              port: http
+            failureThreshold: 3
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 8123
+            timeoutSeconds: 1
+          startupProbe:
+            failureThreshold: 30
+            periodSeconds: 5
+            successThreshold: 1
+            tcpSocket:
+              port: 8123
+            timeoutSeconds: 1
+          volumeMounts:
+          - mountPath: /config
+            name: config                       
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
@@ -59,3 +100,7 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      volumes:
+      - name: config
+        persistentVolumeClaim:
+          claimName: {{ include "home-assistant.fullname" . }}-config
