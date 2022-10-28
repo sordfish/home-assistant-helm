@@ -82,6 +82,10 @@ tolerations: []
 
 affinity: {}
 
+
+persistance:
+  size: 1Gi
+
 addons:
   codeserver:
     image:
