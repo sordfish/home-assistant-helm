@@ -4,7 +4,6 @@ metadata:
   name: {{ include "home-assistant.fullname" . }}-config
 spec:
   storageClassName: "" # Empty string must be explicitly set otherwise default StorageClass will be set
-  volumeName: {{ include "home-assistant.fullname" . }}-config
   accessModes:
   - ReadWriteOnce
   resources:
