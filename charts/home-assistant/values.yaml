@@ -92,3 +92,13 @@ addons:
       repository: ghcr.io/coder/code-server
       pullPolicy: IfNotPresent
       tag: "4.7.1"
+    ingress:
+      enabled: false
+      className: ""
+      annotations: {}
+      hosts:
+        - host: chart-example.local
+          paths:
+            - path: /
+              pathType: ImplementationSpecific
+      tls: []
